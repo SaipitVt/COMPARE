@@ -23,15 +23,15 @@ body{
 }
 h1{
   text-align:center;
-  margin:15px 0;
+  margin:10px 0; /* Уменьшили отступы заголовка */
   font-weight:600;
-  font-size:1.4rem;
+  font-size:1.2rem; /* Уменьшили шрифт заголовка */
   opacity: 0.9;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 .wrapper{
-  padding:0 12px 20px;
+  padding:0 12px 20px; /* Убрали верхний padding, чтобы поднять контент */
   max-width:400px;
   margin:0 auto;
   width: 100%;
@@ -234,7 +234,6 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 </div>
 
 <script>
-// Регистрация Service Worker для PWA
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").then(reg => {
@@ -245,7 +244,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Форматирование чисел
 function formatNum(num) {
   return parseFloat(num).toLocaleString('ru-RU', { 
     maximumFractionDigits: 2,
