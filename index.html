@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<title>Price Compare Matrix Pro</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<style>
+/* ОСНОВНОЙ ДИЗАЙН */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:#0f172a;
+  color:white;
+  min-height:100vh;
+  display: flex;
+  flex-direction: column;
+}
+h1{
+  text-align:center;
+  margin:15px 0;
+  font-weight:600;
+  font-size:1.4rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.wrapper{
+  padding:0 12px 20px;
+  max-width:400px;
+  margin:0 auto;
+  width: 100%;
+}
+
+/* КАРТОЧКИ */
+.card{
+  background:#1e293b;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:12px;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.row { display: flex; gap: 8px; }
+.input-group { flex: 1; }
+.label{
+  font-size:11px;
+  text-transform: uppercase;
+  opacity:0.5;
+  margin-bottom: 5px;
+  padding-left: 2px;
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#0f172a;
+  color:white;
+  font-size:18px; 
+  font-weight: 600;
+  text-align: center;
+}
+input:focus{
+  outline:none;
+  box-shadow: 0 0 0 2px #22c55e;
+  background: #020617;
+}
+
+/* РЕЗУЛЬТАТЫ */
+.result{
+  margin-top:14px;
+  font-weight: 600;
+  min-height: 1.2em;
+}
+.res-main { 
+  text-align: center; 
+  display: block; 
+  margin-bottom: 10px; 
+  font-size: 16px; 
+  opacity: 0.9;
+}
+.res-details { 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: 14px; 
+  gap: 8px;
+  padding: 0 5px;
+}
+.res-item { 
+  flex: 1; 
+  font-variant-numeric: tabular-nums; 
+}
+.txt-green { color: #4ade80; }
+.txt-red { color: #fb7185; }
+
+/* ПОДСВЕТКА ЛУЧШЕГО */
+.best{
+  background: #064e3b;
+  border-color: #22c55e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* ГРАФИК */
+.chart-container {
+  margin-top: 35px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 16px;
+  padding: 45px 12px 15px; 
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 175px;
+  gap: 12px;
+  position: relative;
+  background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 100% 25%; 
+}
+.bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar {
+  width: 100%;
+  max-width: 48px;
+  background: #334155;
+  border-radius: 5px 5px 2px 2px;
+  transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-height: 4px;
+  position: relative;
+}
+.bar::after {
+  content: attr(data-info);
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.bar.is-best {
+  background: #22c55e;
+  box-shadow: 0 0 20px rgba(34,197,94,0.4);
+}
+.bar.is-best::after { color: #4ade80; }
+
+.bar-label {
+  font-size: 11px;
+  margin-top: 10px;
+  opacity: 0.6;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Сравнение цен</h1>
+
+<div class="wrapper">
+  <div class="card" id="p1">
+    <div class="row">
+      <div class="input-group">
+        <div class="label">Вес / Кол-во</div>
+        <input type="number" inputmode="decimal" placeholder="0" oninput="compare()">
+      </div>
+      <div class="input-group">
+        <div class="label">Цена</div>
+        <input type="number" inputmode="decimal" placeholder="0" oninput="compare()">
+      </div>
+    </div>
+    <div class="result"></div>
+  </div>
+
+  <div class="card" id="p2">
+    <div class="row">
+      <div class="input-group">
+        <div class="label">Вес / Кол-во</div>
+        <input type="number" inputmode="decimal" placeholder="0" oninput="compare()">
+      </div>
+      <div class="input-group">
+        <div class="label">Цена</div>
+        <input type="number" inputmode="decimal" placeholder="0" oninput="compare()">
+      </div>
+    </div>
+    <div class="result"></div>
+  </div>
+
+  <div class="card" id="p3">
+    <div class="row">
+      <div class="input-group">
+        <div class="label">Вес / Кол-во</div>
+        <input type="number" inputmode="decimal" placeholder="0" oninput="compare()">
+      </div>
+      <div class="input-group">
+        <div class="label">Цена</div>
+        <input type="number" inputmode="decimal" placeholder="0" oninput="compare()">
+      </div>
+    </div>
+    <div class="result"></div>
+  </div>
+
+  <div class="chart-container">
+    <div class="bar-wrapper">
+      <div class="bar" id="bar1"></div>
+      <div class="bar-label">Товар 1</div>
+    </div>
+    <div class="bar-wrapper">
+      <div class="bar" id="bar2"></div>
+      <div class="bar-label">Товар 2</div>
+    </div>
+    <div class="bar-wrapper">
+      <div class="bar" id="bar3"></div>
+      <div class="bar-label">Товар 3</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Регистрация Service Worker для PWA
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").then(reg => {
+      console.log("PWA: Service Worker готов.");
+    }).catch(err => {
+      console.log("PWA: Ошибка регистрации Service Worker.", err);
+    });
+  });
+}
+
+// Форматирование чисел
+function formatNum(num) {
+  return parseFloat(num).toLocaleString('ru-RU', { 
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0 
+  });
+}
+
+function getCardData(id) {
+  const card = document.getElementById(id);
+  const inputs = card.querySelectorAll("input");
+  const qty = parseFloat(inputs[0].value.replace(',', '.'));
+  const price = parseFloat(inputs[1].value.replace(',', '.'));
+  const resDiv = card.querySelector(".result");
+  const bar = document.getElementById('bar' + id.at(-1));
+
+  card.classList.remove("best");
+  bar.classList.remove("is-best");
+  bar.style.height = "4px";
+  bar.removeAttribute('data-info');
+  resDiv.innerHTML = "";
+
+  if (qty > 0 && price > 0) {
+    const unitPrice = price / qty;
+    resDiv.innerHTML = `<span class="res-main">1 ед. ≈ ${formatNum(unitPrice)}</span>`;
+    return { id, unitPrice, qty, card, resDiv, bar, num: id.at(-1) };
+  }
+  return null;
+}
+
+function compare() {
+  const results = [
+    getCardData("p1"),
+    getCardData("p2"),
+    getCardData("p3")
+  ].filter(r => r !== null);
+
+  if (results.length === 0) return;
+
+  const unitPrices = results.map(r => r.unitPrice);
+  const maxUP = Math.max(...unitPrices);
+  const minUP = Math.min(...unitPrices);
+
+  results.forEach(r => {
+    r.bar.style.height = (r.unitPrice / maxUP * 100) + "%";
+  });
+
+  if (results.length < 2) {
+    results.forEach(r => r.bar.setAttribute('data-info', formatNum(r.unitPrice)));
+    return;
+  }
+
+  results.forEach(r => {
+    if (r.unitPrice === minUP) {
+      r.card.classList.add("best");
+      r.bar.classList.add("is-best");
+      r.bar.setAttribute('data-info', formatNum(r.unitPrice));
+    } else {
+      const overpayPercent = (((r.unitPrice - minUP) / minUP) * 100).toFixed(1);
+      r.bar.setAttribute('data-info', `+${overpayPercent}%`);
+    }
+
+    const others = results.filter(other => other.id !== r.id);
+    let detailsHTML = '<div class="res-details">';
+    
+    others.forEach((other, idx) => {
+      const align = idx === 0 ? 'text-align:left' : 'text-align:right';
+      const diff = ((r.unitPrice - other.unitPrice) * r.qty).toFixed(2);
+      const absDiff = formatNum(Math.abs(diff));
+
+      if (r.unitPrice < other.unitPrice) {
+        detailsHTML += `<span class="res-item txt-green" style="${align}">№${other.num}: выгода ${absDiff}</span>`;
+      } else if (r.unitPrice > other.unitPrice) {
+        detailsHTML += `<span class="res-item txt-red" style="${align}">№${other.num}: дороже ${absDiff}</span>`;
+      } else {
+        detailsHTML += `<span class="res-item" style="${align}; opacity:0.5">№${other.num}: так же</span>`;
+      }
+    });
+    
+    detailsHTML += '</div>';
+    r.resDiv.innerHTML += detailsHTML;
+  });
+}
+</script>
+
+</body>
+</html>
